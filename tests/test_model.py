@@ -603,21 +603,6 @@ def test_should_normalize_segments_and_key_urls_if_base_path_attribute_updated()
     assert obj.dumps() == expected
 
 
-def test_should_normalize_segments_and_key_urls_if_base_path_attribute_updated():
-    base_path = 'http://videoserver.com/hls/live'
-
-    obj = m3u8.M3U8(playlists.PLAYLIST_WITH_ENCRIPTED_SEGMENTS_AND_IV)
-    obj.base_path = base_path
-
-    expected = playlists.PLAYLIST_WITH_ENCRIPTED_SEGMENTS_AND_IV_SORTED \
-        .replace(', IV', ',IV') \
-        .replace('../../../../hls', base_path) \
-        .replace('/hls-key', base_path) \
-        .strip()
-
-    assert obj.dumps().strip() == expected
-
-
 def test_playlist_type_dumped_to_appropriate_m3u8_field():
     obj = m3u8.M3U8()
     obj.playlist_type = 'vod'
