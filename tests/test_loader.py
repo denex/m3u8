@@ -101,7 +101,7 @@ def test_there_should_not_be_absolute_uris_with_loads():
         content = f.read()
     obj = m3u8.loads(content)
     with pytest.raises(ValueError) as e:
-        obj.keys[0].absolute_uri
+        assert obj.keys[0].absolute_uri
     assert str(e.value) == 'There can not be `absolute_uri` with no `base_uri` set'
 
 
@@ -114,7 +114,7 @@ def test_absolute_uri_should_handle_empty_base_uri_path():
 def test_raise_timeout_exception_if_timeout_happens_when_loading_from_uri():
     try:
         obj = m3u8.load(playlists.TIMEOUT_SIMPLE_PLAYLIST_URI, timeout=1)
-    except:
+    except IOError:
         assert True
     else:
         assert False
