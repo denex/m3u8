@@ -38,8 +38,7 @@ def test_program_date_time_attribute_for_each_segment():
 
     first_program_date_time = arrow.get('2014-08-13T13:36:33+00:00').datetime
     for idx, segment in enumerate(obj.segments):
-        assert segment.program_date_time == first_program_date_time + \
-            datetime.timedelta(seconds=idx * 3)
+        assert segment.program_date_time == first_program_date_time + datetime.timedelta(seconds=idx * 3)
 
 
 def test_program_date_time_attribute_with_discontinuity():
@@ -80,6 +79,7 @@ def test_segment_elemental_scte35_attribute():
     assert segments[9].cue_out == False
     assert segments[4].scte35 == '/DAlAAAAAAAAAP/wFAUAAAABf+//wpiQkv4ARKogAAEBAQAAQ6sodg=='
 
+
 def test_segment_envivio_scte35_attribute():
     obj = m3u8.M3U8(playlists.CUE_OUT_ENVIVIO_PLAYLIST)
     segments = obj.segments
@@ -88,11 +88,12 @@ def test_segment_envivio_scte35_attribute():
     assert segments[5].scte35 == '/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=='
     assert segments[7].cue_out == False
 
+
 def test_keys_on_clear_playlist():
     obj = m3u8.M3U8(playlists.SIMPLE_PLAYLIST)
 
     assert len(obj.keys) == 1
-    assert obj.keys[0] == None
+    assert obj.keys[0] is None
 
 
 def test_keys_on_simple_encrypted_playlist():
@@ -105,8 +106,8 @@ def test_keys_on_simple_encrypted_playlist():
 def test_key_attribute():
     obj = m3u8.M3U8(playlists.SIMPLE_PLAYLIST)
     data = {'keys': [{'method': 'AES-128',
-                    'uri': '/key',
-                    'iv': 'foobar'}]}
+                      'uri': '/key',
+                      'iv': 'foobar'}]}
     mock_parser_data(obj, data)
 
     assert 'Key' == obj.keys[0].__class__.__name__
@@ -125,11 +126,11 @@ def test_key_attribute_on_none():
 def test_key_attribute_without_initialization_vector():
     obj = m3u8.M3U8(playlists.SIMPLE_PLAYLIST)
     mock_parser_data(obj, {'keys': [{'method': 'AES-128',
-                                   'uri': '/key'}]})
+                                     'uri': '/key'}]})
 
     assert 'AES-128' == obj.keys[0].method
     assert '/key' == obj.keys[0].uri
-    assert None == obj.keys[0].iv
+    assert obj.keys[0].iv is None
 
 
 def test_segments_attribute():
@@ -157,7 +158,7 @@ def test_segments_attribute_without_title():
 
     assert '/foo/bar-1.ts' == obj.segments[0].uri
     assert 1500 == obj.segments[0].duration
-    assert None == obj.segments[0].title
+    assert obj.segments[0].title is None
 
 
 def test_segments_attribute_without_duration():
@@ -169,7 +170,7 @@ def test_segments_attribute_without_duration():
 
     assert '/foo/bar-1.ts' == obj.segments[0].uri
     assert 'Segment title' == obj.segments[0].title
-    assert None == obj.segments[0].duration
+    assert obj.segments[0].duration is None
 
 
 def test_segments_attribute_with_byterange():
@@ -249,32 +250,32 @@ def test_playlists_attribute():
     assert '/url/1.m3u8' == obj.playlists[0].uri
     assert 1 == obj.playlists[0].stream_info.program_id
     assert 320000 == obj.playlists[0].stream_info.bandwidth
-    assert None == obj.playlists[0].stream_info.codecs
+    assert obj.playlists[0].stream_info.codecs is None
 
-    assert None == obj.playlists[0].media[0].uri
+    assert obj.playlists[0].media[0].uri is None
     assert 'high' == obj.playlists[0].media[0].group_id
     assert 'VIDEO' == obj.playlists[0].media[0].type
-    assert None == obj.playlists[0].media[0].language
+    assert obj.playlists[0].media[0].language is None
     assert 'High' == obj.playlists[0].media[0].name
-    assert None == obj.playlists[0].media[0].default
-    assert None == obj.playlists[0].media[0].autoselect
-    assert None == obj.playlists[0].media[0].forced
-    assert None == obj.playlists[0].media[0].characteristics
+    assert obj.playlists[0].media[0].default is None
+    assert obj.playlists[0].media[0].autoselect is None
+    assert obj.playlists[0].media[0].forced is None
+    assert obj.playlists[0].media[0].characteristics is None
 
     assert '/url/2.m3u8' == obj.playlists[1].uri
     assert 1 == obj.playlists[1].stream_info.program_id
     assert 120000 == obj.playlists[1].stream_info.bandwidth
     assert 'mp4a.40.5' == obj.playlists[1].stream_info.codecs
 
-    assert None == obj.playlists[1].media[0].uri
+    assert obj.playlists[1].media[0].uri is None
     assert 'low' == obj.playlists[1].media[0].group_id
     assert 'VIDEO' == obj.playlists[1].media[0].type
-    assert None == obj.playlists[1].media[0].language
+    assert obj.playlists[1].media[0].language is None
     assert 'Low' == obj.playlists[1].media[0].name
     assert 'YES' == obj.playlists[1].media[0].default
     assert 'YES' == obj.playlists[1].media[0].autoselect
-    assert None == obj.playlists[1].media[0].forced
-    assert None == obj.playlists[1].media[0].characteristics
+    assert obj.playlists[1].media[0].forced is None
+    assert obj.playlists[1].media[0].characteristics is None
 
     assert [] == obj.iframe_playlists
 
@@ -289,8 +290,8 @@ def test_playlists_attribute_without_program_id():
 
     assert '/url/1.m3u8' == obj.playlists[0].uri
     assert 320000 == obj.playlists[0].stream_info.bandwidth
-    assert None == obj.playlists[0].stream_info.codecs
-    assert None == obj.playlists[0].stream_info.program_id
+    assert obj.playlists[0].stream_info.codecs is None
+    assert obj.playlists[0].stream_info.program_id is None
 
 
 def test_playlists_attribute_with_resolution():
@@ -298,7 +299,7 @@ def test_playlists_attribute_with_resolution():
 
     assert 2 == len(obj.playlists)
     assert (512, 288) == obj.playlists[0].stream_info.resolution
-    assert None == obj.playlists[1].stream_info.resolution
+    assert obj.playlists[1].stream_info.resolution is None
 
 
 def test_iframe_playlists_attribute():
@@ -324,9 +325,9 @@ def test_iframe_playlists_attribute():
     assert 'avc1.4d001f' == obj.iframe_playlists[0].iframe_stream_info.codecs
 
     assert '/url/2.m3u8' == obj.iframe_playlists[1].uri
-    assert None == obj.iframe_playlists[1].iframe_stream_info.program_id
+    assert obj.iframe_playlists[1].iframe_stream_info.program_id is None
     assert '120000' == obj.iframe_playlists[1].iframe_stream_info.bandwidth
-    assert None == obj.iframe_playlists[1].iframe_stream_info.resolution
+    assert obj.iframe_playlists[1].iframe_stream_info.resolution is None
     assert 'avc1.4d400d' == obj.iframe_playlists[1].iframe_stream_info.codecs
 
 
@@ -336,7 +337,7 @@ def test_version_attribute():
     assert '2' == obj.version
 
     mock_parser_data(obj, {})
-    assert None == obj.version
+    assert obj.version is None
 
 
 def test_allow_cache_attribute():
@@ -345,7 +346,7 @@ def test_allow_cache_attribute():
     assert 'no' == obj.allow_cache
 
     mock_parser_data(obj, {})
-    assert None == obj.allow_cache
+    assert obj.allow_cache is None
 
 
 def test_files_attribute_should_list_all_files_including_segments_and_key():
@@ -507,13 +508,13 @@ def test_should_dump_complex_unencrypted_encrypted_keys():
 
     assert expected == obj.dumps().strip()
 
+
 def test_should_dump_complex_unencrypted_encrypted_keys_no_uri_attr():
     obj = m3u8.M3U8(playlists.PLAYLIST_WITH_MULTIPLE_KEYS_UNENCRYPTED_AND_ENCRYPTED_NONE_AND_NO_URI_ATTR)
     expected = playlists.PLAYLIST_WITH_MULTIPLE_KEYS_UNENCRYPTED_AND_ENCRYPTED_NONE_AND_NO_URI_ATTR \
         .strip()
 
     assert expected == obj.dumps().strip()
-
 
 
 def test_length_segments_by_key():
@@ -530,13 +531,13 @@ def test_list_segments_by_key():
     # unencrypted segments
     segments = obj.segments.by_key(None)
     expected = "../../../../hls/streamNum82400.ts\n../../../../hls/streamNum82401.ts"
-    output = [ segment.uri for segment in segments ]
+    output = [segment.uri for segment in segments]
     assert "\n".join(output).strip() == expected.strip()
 
     # segments for last key
     segments = obj.segments.by_key(obj.keys[2])
     expected = "../../../../hls/streamNum82404.ts\n../../../../hls/streamNum82405.ts"
-    output = [ segment.uri for segment in segments ]
+    output = [segment.uri for segment in segments]
     assert "\n".join(output).strip() == expected.strip()
 
 
@@ -591,7 +592,7 @@ def test_should_normalize_segments_and_key_urls_if_base_path_attribute_updated()
     base_path = 'http://videoserver.com/hls/live'
 
     obj = m3u8.M3U8(playlists.PLAYLIST_WITH_ENCRIPTED_SEGMENTS_AND_IV)
-    obj.base_path = base_path     # update later
+    obj.base_path = base_path  # update later
 
     expected = playlists.PLAYLIST_WITH_ENCRIPTED_SEGMENTS_AND_IV_SORTED \
         .replace(', IV', ',IV') \

@@ -25,10 +25,10 @@ __all__ = ('M3U8', 'Playlist', 'IFramePlaylist', 'Media',
 
 
 def loads(content):
-    '''
+    """
     Given a string with a m3u8 content, returns a M3U8 object.
     Raises ValueError if invalid content
-    '''
+    """
     return M3U8(content)
 
 

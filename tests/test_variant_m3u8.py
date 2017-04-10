@@ -3,7 +3,9 @@
 # Use of this source code is governed by a MIT License
 # license that can be found in the LICENSE file.
 
-import m3u8, playlists
+import m3u8
+import playlists
+
 
 def test_create_a_variant_m3u8_with_two_playlists():
     variant_m3u8 = m3u8.M3U8()
@@ -12,8 +14,12 @@ def test_create_a_variant_m3u8_with_two_playlists():
                            'English', 'YES', 'YES', 'NO', None)
     variant_m3u8.add_media(subtitles)
 
-    low_playlist = m3u8.Playlist('http://example.com/low.m3u8', stream_info={'bandwidth': 1280000, 'program_id': 1, 'subtitles': 'subs'}, media=[subtitles], base_uri=None)
-    high_playlist = m3u8.Playlist('http://example.com/high.m3u8', stream_info={'bandwidth': 3000000, 'program_id': 1, 'subtitles': 'subs'}, media=[subtitles], base_uri=None)
+    low_playlist = m3u8.Playlist('http://example.com/low.m3u8',
+                                 stream_info={'bandwidth': 1280000, 'program_id': 1, 'subtitles': 'subs'},
+                                 media=[subtitles], base_uri=None)
+    high_playlist = m3u8.Playlist('http://example.com/high.m3u8',
+                                  stream_info={'bandwidth': 3000000, 'program_id': 1, 'subtitles': 'subs'},
+                                  media=[subtitles], base_uri=None)
 
     variant_m3u8.add_playlist(low_playlist)
     variant_m3u8.add_playlist(high_playlist)
@@ -27,6 +33,7 @@ http://example.com/low.m3u8
 http://example.com/high.m3u8
 """
     assert expected_content == variant_m3u8.dumps()
+
 
 def test_create_a_variant_m3u8_with_two_playlists_and_two_iframe_playlists():
     variant_m3u8 = m3u8.M3U8()
@@ -110,8 +117,8 @@ def test_variant_playlist_with_average_bandwidth():
                      'average_bandwidth': 2857123,
                      'program_id': 1,
                      'subtitles': 'subs'},
-       media=[],
-       base_uri=None
+        media=[],
+        base_uri=None
     )
 
     variant_m3u8.add_playlist(low_playlist)
@@ -125,6 +132,7 @@ http://example.com/low.m3u8
 http://example.com/high.m3u8
 """
     assert expected_content == variant_m3u8.dumps()
+
 
 def test_variant_playlist_with_multiple_media():
     variant_m3u8 = m3u8.loads(playlists.MULTI_MEDIA_PLAYLIST)

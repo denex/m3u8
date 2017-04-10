@@ -13,7 +13,7 @@ from m3u8 import protocol
 http://tools.ietf.org/html/draft-pantos-http-live-streaming-08#section-3.2
 http://stackoverflow.com/questions/2785755/how-to-split-but-ignore-separators-in-quoted-strings-in-python
 '''
-ATTRIBUTELISTPATTERN = re.compile(r'''((?:[^,"']|"[^"]*"|'[^']*')+)''')
+ATTRIBUTE_LIST_PATTERN = re.compile(r'''((?:[^,"']|"[^"]*"|'[^']*')+)''')
 
 
 def cast_date_time(value):
@@ -22,7 +22,6 @@ def cast_date_time(value):
 
 def format_date_time(value):
     return value.isoformat()
-
 
 
 class ParseError(Exception):
@@ -35,11 +34,13 @@ class ParseError(Exception):
         return 'Syntax error in manifest on line %d: %s' % (self.lineno, self.line)
 
 
-
 def parse(content, strict=False):
-    '''
+    """
     Given a M3U8 playlist content returns a dictionary with all data found
-    '''
+    :type content: str
+    :type strict: bool
+    :rtype: dict
+    """
     data = {
         'media_sequence': 0,
         'is_variant': False,
@@ -163,7 +164,11 @@ def parse(content, strict=False):
 
 
 def _parse_key(line):
-    params = ATTRIBUTELISTPATTERN.split(line.replace(protocol.ext_x_key + ':', ''))[1::2]
+    """
+    :param line: #EXT-X-KEY:METHOD=AES-128,URI="../key.bin", IV=0X10ef8f758ca555115584bb5b3c687f52
+    :rtype: dict
+    """
+    params = ATTRIBUTE_LIST_PATTERN.split(line.replace(protocol.ext_x_key + ':', ''))[1::2]
     key = {}
     for param in params:
         name, value = param.split('=', 1)
@@ -172,6 +177,14 @@ def _parse_key(line):
 
 
 def _parse_extinf(line, data, state, lineno, strict):
+    """
+    :param line: frozenset(['#EXTINF:5220,'])
+    :type data: dict
+    :type state: dict
+    :type lineno: int
+    :type strict: bool
+    :rtype: None
+    """
     chunks = line.replace(protocol.extinf + ':', '').split(',')
     if len(chunks) == 2:
         duration, title = chunks
@@ -188,6 +201,12 @@ def _parse_extinf(line, data, state, lineno, strict):
 
 
 def _parse_ts_chunk(line, data, state):
+    """
+    :param line: URI to .ts segment
+    :type data: dict
+    :type state: dict
+    :rtype: None
+    """
     segment = state.pop('segment')
     if state.get('current_program_date_time'):
         segment['program_date_time'] = state['current_program_date_time']
@@ -207,22 +226,35 @@ def _parse_ts_chunk(line, data, state):
     data['segments'].append(segment)
 
 
-def _parse_attribute_list(prefix, line, atribute_parser):
-    params = ATTRIBUTELISTPATTERN.split(line.replace(prefix + ':', ''))[1::2]
+def _parse_attribute_list(prefix, line, attribute_parser):
+    """
+    :param prefix: '#EXT-X-STREAM-INF'
+    :param line: '#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=445000,RESOLUTION=512x288,CODECS="avc1.77.30, mp4a.40.5"'
+    :param attribute_parser: {attr_name: function, 'program_id': int, ...}
+    :return: {program_id: 1, ...}
+    """
+    params = ATTRIBUTE_LIST_PATTERN.split(line.replace(prefix + ':', ''))[1::2]
 
     attributes = {}
     for param in params:
         name, value = param.split('=', 1)
         name = normalize_attribute(name)
 
-        if name in atribute_parser:
-            value = atribute_parser[name](value)
+        if name in attribute_parser:
+            value = attribute_parser[name](value)
 
         attributes[name] = value
 
     return attributes
 
+
 def _parse_stream_inf(line, data, state):
+    """
+    :param line: '#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=445000,RESOLUTION=512x288,CODECS="avc1.77.30, mp4a.40.5"'
+    :type data: dict
+    :type state: dict
+    :rtype: None
+    """
     data['is_variant'] = True
     data['media_sequence'] = None
     atribute_parser = remove_quotes_parser('codecs', 'audio', 'video', 'subtitles')
@@ -233,6 +265,11 @@ def _parse_stream_inf(line, data, state):
 
 
 def _parse_i_frame_stream_inf(line, data):
+    """
+    :param line: '#EXT-X-I-FRAME-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=151288,RESOLUTION=624x352,CODECS="avc1.4d001f",URI="video-800k-iframes.m3u8"'
+    :type data: dict
+    :rtype: None
+    """
     atribute_parser = remove_quotes_parser('codecs', 'uri')
     atribute_parser["program_id"] = int
     atribute_parser["bandwidth"] = int
@@ -244,12 +281,23 @@ def _parse_i_frame_stream_inf(line, data):
 
 
 def _parse_media(line, data, state):
+    """
+    :param line: '#EXT-X-MEDIA:URI="chinese/ed.ttml",TYPE=SUBTITLES,GROUP-ID="subs",LANGUAGE="zho",NAME="Chinese",AUTOSELECT=YES,FORCED=NO'
+    :type data: dict
+    :rtype: None
+    """
     quoted = remove_quotes_parser('uri', 'group_id', 'language', 'name', 'characteristics')
     media = _parse_attribute_list(protocol.ext_x_media, line, quoted)
     data['media'].append(media)
 
 
 def _parse_variant_playlist(line, data, state):
+    """
+    :param line: 'index_0_av.m3u8?e=b471643725c47acd'
+    :type data: dict
+    :type state: dict
+    :rtype: None
+    """
     playlist = {'uri': line,
                 'stream_info': state.pop('stream_info')}
 
@@ -257,12 +305,23 @@ def _parse_variant_playlist(line, data, state):
 
 
 def _parse_byterange(line, state):
+    """
+    :param line: '#EXT-X-BYTERANGE:9400@376'
+    :type state: dict
+    :rtype: None
+    """
     if 'segment' not in state:
         state['segment'] = {}
     state['segment']['byterange'] = line.replace(protocol.ext_x_byterange + ':', '')
 
 
 def _parse_simple_parameter_raw_value(line, cast_to=str, normalize=False):
+    """
+    :param line: '#EXT-X-PARAM-NAME:param_value'
+    :type cast_to: function
+    :type normalize: bool
+    :return: param_name, cast_to(param_value)
+    """
     param, value = line.split(':', 1)
     param = normalize_attribute(param.replace('#EXT-X-', ''))
     if normalize:
@@ -271,6 +330,13 @@ def _parse_simple_parameter_raw_value(line, cast_to=str, normalize=False):
 
 
 def _parse_and_set_simple_parameter_raw_value(line, data, cast_to=str, normalize=False):
+    """
+    :param line: '#EXT-X-PARAM-NAME:param_value'
+    :type data: dict
+    :type cast_to: function
+    :type normalize: bool
+    :return: parameter casted with 'cast_to' to value
+    """
     param, value = _parse_simple_parameter_raw_value(line, cast_to, normalize)
     data[param] = value
     return data[param]
@@ -281,30 +347,47 @@ def _parse_simple_parameter(line, data, cast_to=str):
 
 
 def _parse_cueout(line, state):
+    """
+    :param line: '#EXT-X-CUE-OUT-CONT:CAID=0x000000002310E3A8,ElapsedTime=161,Duration=181'
+    :type state: dict
+    :rtype: None
+    """
     param, value = line.split(':', 1)
     res = re.match('.*Duration=(.*),SCTE35=(.*)$', value)
     if res:
         state['current_cue_out_duration'] = res.group(1)
         state['current_cue_out_scte35'] = res.group(2)
 
-def _cueout_elemental(line, state, prevline):
+
+def _cueout_elemental(line, state, prev_line):
+    """
+    :param line: '#EXT-X-CUE-OUT:DURATION=366,ID=16777323,CUE="/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=="'
+    :param prev_line:
+    :return: '/DAlAAAAAAAAAP/wFAUAAAABf+//wpiQkv4ARKogAAEBAQAAQ6sodg==', '50.000'
+    """
     param, value = line.split(':', 1)
-    res = re.match('.*EXT-OATCLS-SCTE35:(.*)$', prevline)
+    res = re.match('.*EXT-OATCLS-SCTE35:(.*)$', prev_line)
     if res:
-        return (res.group(1), value)
+        return res.group(1), value
     else:
         return None
 
-def _cueout_envivio(line, state, prevline):
+
+def _cueout_envivio(line, state, prev_line):
+    """
+    :param line: '#EXT-X-CUE-OUT:DURATION=366,ID=16777323,CUE="/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=="'
+    :return: "/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A==", '366'
+    """
     param, value = line.split(':', 1)
     res = re.match('.*DURATION=(.*),.*,CUE="(.*)"', value)
     if res:
-        return (res.group(2), res.group(1))
+        return res.group(2), res.group(1)
     else:
         return None
 
-def _parse_cueout_start(line, state, prevline):
-    _cueout_state = _cueout_elemental(line, state, prevline) or _cueout_envivio(line, state, prevline)
+
+def _parse_cueout_start(line, state, prev_line):
+    _cueout_state = _cueout_elemental(line, state, prev_line) or _cueout_envivio(line, state, prev_line)
     if _cueout_state:
         state['current_cue_out_scte35'] = _cueout_state[0]
         state['current_cue_out_duration'] = _cueout_state[1]
@@ -313,7 +396,7 @@ def _parse_cueout_start(line, state, prevline):
 def _parse_segment_map_uri(line):
     """
     :param line: '#EXT-X-MAP:URI="fileSequence0.mp4"'
-    :rtype: str 
+    :rtype: str
     """
     return remove_quotes(line.replace(protocol.ext_x_map+':', '').split('=', 1)[1])
 
@@ -323,11 +406,15 @@ def string_to_lines(string):
 
 
 def remove_quotes_parser(*attrs):
+    """
+    :param attrs: <type 'tuple'>: ('codecs', 'audio', 'video', 'subtitles')
+    :return: {attr: remove_quotes}
+    """
     return dict(zip(attrs, itertools.repeat(remove_quotes)))
 
 
 def remove_quotes(string):
-    '''
+    """
     Remove quotes from string.
 
     Ex.:
@@ -335,7 +422,7 @@ def remove_quotes(string):
       'foo' -> foo
       'foo  -> 'foo
 
-    '''
+    """
     quotes = ('"', "'")
     if string and string[0] in quotes and string[-1] in quotes:
         return string[1:-1]
