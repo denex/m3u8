@@ -1,12 +1,15 @@
+"""
+Package maker
+"""
 from os.path import dirname, abspath, join, exists
 from setuptools import setup
 
-long_description = None
+LONG_DESCRIPTION_TEXT = None
 if exists("README.rst"):
-    with  open("README.rst") as file:
-        long_description = file.read()
+    with open("README.rst") as f:
+        LONG_DESCRIPTION_TEXT = f.read()
 
-install_reqs = [req for req in open(abspath(join(dirname(__file__), 'requirements.txt')))]
+INSTALL_REQS = tuple([req for req in open(abspath(join(dirname(__file__), 'requirements.txt')))])
 
 setup(
     name="m3u8",
@@ -16,9 +19,9 @@ setup(
     license='MIT',
     zip_safe=False,
     include_package_data=True,
-    install_requires=install_reqs,
+    install_requires=INSTALL_REQS,
     packages=["m3u8"],
     url="https://github.com/globocom/m3u8",
     description="Python m3u8 parser",
-    long_description=long_description
-    )
+    long_description=LONG_DESCRIPTION_TEXT
+)
