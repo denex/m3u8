@@ -11,6 +11,8 @@ from bottle import route, run, response, redirect
 import bottle
 import time
 
+SERVER_ADDRESS = dict(host='localhost', port=8112)
+
 playlists = abspath(join(dirname(__file__), 'playlists'))
 
 
@@ -43,5 +45,10 @@ def m3u8_file(filename):
         return fileobj.read().strip()
 
 
-bottle.debug = True
-run(host='localhost', port=8112)
+def main():
+    bottle.debug = True
+    run(**SERVER_ADDRESS)
+
+
+if __name__ == '__main__':
+    main()
