@@ -340,6 +340,10 @@ class Segment(BasePathMixin):
         # Key(base_uri=base_uri, **key) if key else None
 
     def dumps(self, last_segment):
+        """
+        :type last_segment: Segment or None
+        :rtype: str
+        """
         output = []
         if last_segment and self.key != last_segment.key:
             output.append(str(self.key))

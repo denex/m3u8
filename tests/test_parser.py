@@ -109,8 +109,8 @@ def test_should_parse_variant_playlist():
     data = m3u8.parse(playlists.VARIANT_PLAYLIST)
     playlists_list = list(data['playlists'])
 
-    assert True == data['is_variant']
-    assert None == data['media_sequence']
+    assert data['is_variant']
+    assert data['media_sequence'] is None
     assert 4 == len(playlists_list)
 
     assert 'http://example.com/low.m3u8' == playlists_list[0]['uri']
@@ -153,7 +153,7 @@ def test_should_parse_variant_playlist_with_iframe_playlists():
     data = m3u8.parse(playlists.VARIANT_PLAYLIST_WITH_IFRAME_PLAYLISTS)
     iframe_playlists = list(data['iframe_playlists'])
 
-    assert True == data['is_variant']
+    assert data['is_variant']
 
     assert 4 == len(iframe_playlists)
 
@@ -174,7 +174,7 @@ def test_should_parse_variant_playlist_with_alt_iframe_playlists_layout():
     data = m3u8.parse(playlists.VARIANT_PLAYLIST_WITH_ALT_IFRAME_PLAYLISTS_LAYOUT)
     iframe_playlists = list(data['iframe_playlists'])
 
-    assert True == data['is_variant']
+    assert data['is_variant']
 
     assert 4 == len(iframe_playlists)
 
@@ -194,7 +194,7 @@ def test_should_parse_variant_playlist_with_alt_iframe_playlists_layout():
 def test_should_parse_iframe_playlist():
     data = m3u8.parse(playlists.IFRAME_PLAYLIST)
 
-    assert True == data['is_i_frames_only']
+    assert data['is_i_frames_only']
     assert 4.12 == data['segments'][0]['duration']
     assert '9400@376' == data['segments'][0]['byterange']
     assert 'segment1.ts' == data['segments'][0]['uri']
@@ -203,7 +203,7 @@ def test_should_parse_iframe_playlist():
 def test_should_parse_playlist_using_byteranges():
     data = m3u8.parse(playlists.PLAYLIST_USING_BYTERANGES)
 
-    assert False == data['is_i_frames_only']
+    assert not data['is_i_frames_only']
     assert 10 == data['segments'][0]['duration']
     assert '76242@0' == data['segments'][0]['byterange']
     assert 'segment.ts' == data['segments'][0]['uri']
@@ -211,10 +211,10 @@ def test_should_parse_playlist_using_byteranges():
 
 def test_should_parse_endlist_playlist():
     data = m3u8.parse(playlists.SIMPLE_PLAYLIST)
-    assert True == data['is_endlist']
+    assert data['is_endlist']
 
     data = m3u8.parse(playlists.SLIDING_WINDOW_PLAYLIST)
-    assert False == data['is_endlist']
+    assert not data['is_endlist']
 
 
 def test_should_parse_ALLOW_CACHE():

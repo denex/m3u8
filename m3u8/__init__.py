@@ -32,13 +32,13 @@ def loads(content):
     return M3U8(content)
 
 
-def load(uri, timeout=None, headers={}):
-    '''
+def load(uri, timeout=None, headers=None):
+    """
     Retrieves the content from a given URI and returns a M3U8 object.
     Raises ValueError if invalid content or IOError if request fails.
     Raises socket.timeout(python 2.7+) or urllib2.URLError(python 2.6) if
     timeout happens when loading from uri
-    '''
+    """
     if is_url(uri):
         return _load_from_uri(uri, timeout, headers)
     else:
@@ -47,8 +47,8 @@ def load(uri, timeout=None, headers={}):
 # Support for python3 inspired by https://github.com/szemtiv/m3u8/
 
 
-def _load_from_uri(uri, timeout=None, headers={}):
-    request = Request(uri, headers=headers)
+def _load_from_uri(uri, timeout=None, headers=None):
+    request = Request(uri, headers=(headers or {}))
     resource = urlopen(request, timeout=timeout)
     base_uri = _parsed_url(_url_for(request))
     if PYTHON_MAJOR_VERSION < (3,):

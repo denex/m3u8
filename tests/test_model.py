@@ -59,35 +59,35 @@ def test_segment_discontinuity_attribute():
     obj = m3u8.M3U8(playlists.DISCONTINUITY_PLAYLIST_WITH_PROGRAM_DATE_TIME)
     segments = obj.segments
 
-    assert segments[0].discontinuity == False
-    assert segments[5].discontinuity == True
-    assert segments[6].discontinuity == False
+    assert not segments[0].discontinuity
+    assert segments[5].discontinuity
+    assert not segments[6].discontinuity
 
 
 def test_segment_cue_out_attribute():
     obj = m3u8.M3U8(playlists.CUE_OUT_PLAYLIST)
     segments = obj.segments
 
-    assert segments[1].cue_out == True
-    assert segments[2].cue_out == True
-    assert segments[3].cue_out == False
+    assert segments[1].cue_out
+    assert segments[2].cue_out
+    assert not segments[3].cue_out
 
 
 def test_segment_elemental_scte35_attribute():
     obj = m3u8.M3U8(playlists.CUE_OUT_ELEMENTAL_PLAYLIST)
     segments = obj.segments
-    assert segments[4].cue_out == True
-    assert segments[9].cue_out == False
+    assert segments[4].cue_out
+    assert not segments[9].cue_out
     assert segments[4].scte35 == '/DAlAAAAAAAAAP/wFAUAAAABf+//wpiQkv4ARKogAAEBAQAAQ6sodg=='
 
 
 def test_segment_envivio_scte35_attribute():
     obj = m3u8.M3U8(playlists.CUE_OUT_ENVIVIO_PLAYLIST)
     segments = obj.segments
-    assert segments[3].cue_out == True
+    assert segments[3].cue_out
     assert segments[4].scte35 == '/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=='
     assert segments[5].scte35 == '/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=='
-    assert segments[7].cue_out == False
+    assert not segments[7].cue_out
 
 
 def test_keys_on_clear_playlist():

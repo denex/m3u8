@@ -74,7 +74,7 @@ def test_load_should_create_object_from_uri_with_relative_segments(m3u8_server):
     prefix = urlparsed.scheme + '://' + urlparsed.netloc
     expected_key_abspath = '%s%s/key.bin' % (prefix, os.path.normpath(base_uri + '/..').replace(os.sep, '/'))
     expected_key_path = '../key.bin'
-    expected_ts1_abspath = '%s/entire1.ts' % (prefix)
+    expected_ts1_abspath = '%s/entire1.ts' % prefix
     expected_ts1_path = '/entire1.ts'
     expected_ts2_abspath = '%s%sentire2.ts' % (prefix, os.path.normpath(base_uri + '/..').replace(os.sep, '/') + '/')
     expected_ts2_path = '../entire2.ts'
@@ -113,7 +113,7 @@ def test_absolute_uri_should_handle_empty_base_uri_path():
 
 def test_raise_timeout_exception_if_timeout_happens_when_loading_from_uri():
     try:
-        obj = m3u8.load(playlists.TIMEOUT_SIMPLE_PLAYLIST_URI, timeout=1)
+        m3u8.load(playlists.TIMEOUT_SIMPLE_PLAYLIST_URI, timeout=1)
     except IOError:
         assert True
     else:

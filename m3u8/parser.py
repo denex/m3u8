@@ -268,7 +268,8 @@ def _parse_stream_inf(line, data, state):
 
 def _parse_i_frame_stream_inf(line, data):
     """
-    :param line: '#EXT-X-I-FRAME-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=151288,RESOLUTION=624x352,CODECS="avc1.4d001f",URI="video-800k-iframes.m3u8"'
+    :param line: '#EXT-X-I-FRAME-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=151288,RESOLUTION=624x352,CODECS="avc1.4d001f",
+                  URI="video-800k-iframes.m3u8"'
     :type data: dict
     :rtype: None
     """
@@ -284,7 +285,8 @@ def _parse_i_frame_stream_inf(line, data):
 
 def _parse_media(line, data, state):
     """
-    :param line: '#EXT-X-MEDIA:URI="chinese/ed.ttml",TYPE=SUBTITLES,GROUP-ID="subs",LANGUAGE="zho",NAME="Chinese",AUTOSELECT=YES,FORCED=NO'
+    :param line: '#EXT-X-MEDIA:URI="chinese/ed.ttml",TYPE=SUBTITLES,GROUP-ID="subs",LANGUAGE="zho",NAME="Chinese",
+                  AUTOSELECT=YES,FORCED=NO'
     :type data: dict
     :rtype: None
     """
@@ -320,7 +322,7 @@ def _parse_byterange(line, state):
 def _parse_simple_parameter_raw_value(line, cast_to=str, normalize=False):
     """
     :param line: '#EXT-X-PARAM-NAME:param_value'
-    :type cast_to: function
+    :type cast_to: callable
     :type normalize: bool
     :return: param_name, cast_to(param_value)
     """
@@ -345,6 +347,12 @@ def _parse_and_set_simple_parameter_raw_value(line, data, cast_to=str, normalize
 
 
 def _parse_simple_parameter(line, data, cast_to=str):
+    """
+    :type line: str 
+    :type data: dict 
+    :type cast_to: callable
+    :rtype: dict 
+    """
     return _parse_and_set_simple_parameter_raw_value(line, data, cast_to, True)
 
 
@@ -363,7 +371,8 @@ def _parse_cueout(line, state):
 
 def _cueout_elemental(line, state, prev_line):
     """
-    :param line: '#EXT-X-CUE-OUT:DURATION=366,ID=16777323,CUE="/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=="'
+    :param line: '#EXT-X-CUE-OUT:DURATION=366,ID=16777323,
+                  CUE="/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=="'
     :param prev_line:
     :return: '/DAlAAAAAAAAAP/wFAUAAAABf+//wpiQkv4ARKogAAEBAQAAQ6sodg==', '50.000'
     """
@@ -377,7 +386,8 @@ def _cueout_elemental(line, state, prev_line):
 
 def _cueout_envivio(line, state, prev_line):
     """
-    :param line: '#EXT-X-CUE-OUT:DURATION=366,ID=16777323,CUE="/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=="'
+    :param line: '#EXT-X-CUE-OUT:DURATION=366,ID=16777323,
+                  CUE="/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A=="'
     :return: "/DAlAAAENOOQAP/wFAUBAABrf+//N25XDf4B9p/gAAEBAQAAxKni9A==", '366'
     """
     param, value = line.split(':', 1)
