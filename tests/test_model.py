@@ -696,4 +696,5 @@ def assert_file_content(filename, expected):
 def mock_parser_data(m3u8_obj, data):
     data.setdefault('segments', [])
     m3u8_obj.data = data
+    # noinspection PyProtectedMember
     m3u8_obj._initialize_attributes()

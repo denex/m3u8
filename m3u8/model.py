@@ -201,6 +201,7 @@ class M3U8(object):
 
     @base_path.setter
     def base_path(self, newbase_path):
+        # noinspection PyAttributeOutsideInit
         self._base_path = newbase_path
         self._update_base_path()
 
@@ -215,11 +216,13 @@ class M3U8(object):
         self.playlists.base_path = self._base_path
 
     def add_playlist(self, playlist):
+        # noinspection PyAttributeOutsideInit
         self.is_variant = True
         self.playlists.append(playlist)
 
     def add_iframe_playlist(self, iframe_playlist):
         if iframe_playlist is not None:
+            # noinspection PyAttributeOutsideInit
             self.is_variant = True
             self.iframe_playlists.append(iframe_playlist)
 
@@ -274,6 +277,7 @@ class M3U8(object):
         with open(filename, 'w') as fileobj:
             fileobj.write(self.dumps())
 
+    # noinspection PyMethodMayBeStatic
     def _create_sub_directories(self, filename):
         basename = os.path.dirname(filename)
         try:

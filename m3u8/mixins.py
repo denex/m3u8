@@ -36,18 +36,21 @@ class BasePathMixin(object):
     def base_path(self, newbase_path):
         if not self.base_path:
             self.uri = "%s/%s" % (newbase_path, self.uri)
+        # noinspection PyAttributeOutsideInit
         self.uri = self.uri.replace(self.base_path, newbase_path)
 
 
 class GroupedBasePathMixin(object):
 
     def _set_base_uri(self, new_base_uri):
+        # noinspection PyTypeChecker
         for item in self:
             item.base_uri = new_base_uri
 
     base_uri = property(None, _set_base_uri)
 
     def _set_base_path(self, newbase_path):
+        # noinspection PyTypeChecker
         for item in self:
             item.base_path = newbase_path
 

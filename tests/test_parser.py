@@ -217,11 +217,13 @@ def test_should_parse_endlist_playlist():
     assert not data['is_endlist']
 
 
+# noinspection PyPep8Naming
 def test_should_parse_ALLOW_CACHE():
     data = m3u8.parse(playlists.PLAYLIST_WITH_ENCRIPTED_SEGMENTS_AND_IV)
     assert 'no' == data['allow_cache']
 
 
+# noinspection PyPep8Naming
 def test_should_parse_VERSION():
     data = m3u8.parse(playlists.PLAYLIST_WITH_ENCRIPTED_SEGMENTS_AND_IV)
     assert '2' == data['version']

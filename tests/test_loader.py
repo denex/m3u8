@@ -27,6 +27,7 @@ def test_load_should_create_object_from_file():
     assert 'http://media.example.com/entire.ts' == obj.segments[0].uri
 
 
+# noinspection PyUnusedLocal
 def test_load_should_create_object_from_uri(m3u8_server):
     obj = m3u8.load(playlists.SIMPLE_PLAYLIST_URI)
     assert isinstance(obj, m3u8.M3U8)
@@ -34,6 +35,7 @@ def test_load_should_create_object_from_uri(m3u8_server):
     assert 'http://media.example.com/entire.ts' == obj.segments[0].uri
 
 
+# noinspection PyUnusedLocal
 def test_load_should_remember_redirect(m3u8_server):
     obj = m3u8.load(playlists.REDIRECT_PLAYLIST_URI)
     urlparsed = url_parser.urlparse(playlists.SIMPLE_PLAYLIST_URI)
@@ -67,6 +69,7 @@ def test_load_should_create_object_from_file_with_relative_segments():
     assert expected_ts4_abspath == obj.segments[3].absolute_uri
 
 
+# noinspection PyUnusedLocal
 def test_load_should_create_object_from_uri_with_relative_segments(m3u8_server):
     obj = m3u8.load(playlists.RELATIVE_PLAYLIST_URI)
     urlparsed = url_parser.urlparse(playlists.RELATIVE_PLAYLIST_URI)

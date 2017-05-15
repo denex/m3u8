@@ -15,6 +15,7 @@ except ImportError:  # Python 2.x
 import pytest
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "tests")))
+# noinspection PyPep8,PyUnresolvedReferences
 import m3u8server
 
 TEST_SERVER_STDOUT = "tests/server.stdout"
@@ -22,6 +23,7 @@ TEST_SERVER_URL = "http://{host}:{port}/path/to/redirect_me".format(**m3u8server
 TEST_SERVER_STARTUP_TIMEOUT_SEC = 2.0
 
 
+# noinspection PyUnusedLocal
 @pytest.fixture(scope="session")
 def m3u8_server(request):
     out_and_err_f = open(TEST_SERVER_STDOUT, 'w')
