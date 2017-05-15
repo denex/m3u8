@@ -27,14 +27,14 @@ def test_load_should_create_object_from_file():
     assert 'http://media.example.com/entire.ts' == obj.segments[0].uri
 
 
-def test_load_should_create_object_from_uri():
+def test_load_should_create_object_from_uri(m3u8_server):
     obj = m3u8.load(playlists.SIMPLE_PLAYLIST_URI)
     assert isinstance(obj, m3u8.M3U8)
     assert 5220 == obj.target_duration
     assert 'http://media.example.com/entire.ts' == obj.segments[0].uri
 
 
-def test_load_should_remember_redirect():
+def test_load_should_remember_redirect(m3u8_server):
     obj = m3u8.load(playlists.REDIRECT_PLAYLIST_URI)
     urlparsed = url_parser.urlparse(playlists.SIMPLE_PLAYLIST_URI)
     assert urlparsed.scheme + '://' + urlparsed.netloc + "/" == obj.base_uri
@@ -43,15 +43,15 @@ def test_load_should_remember_redirect():
 def test_load_should_create_object_from_file_with_relative_segments():
     base_uri = os.path.dirname(playlists.RELATIVE_PLAYLIST_FILENAME)
     obj = m3u8.load(playlists.RELATIVE_PLAYLIST_FILENAME)
-    expected_key_abspath = '%s/key.bin' % os.path.dirname(base_uri)
+    expected_key_abspath = os.path.join(os.path.dirname(base_uri), 'key.bin')
     expected_key_path = '../key.bin'
-    expected_ts1_abspath = '%s/entire1.ts' % base_uri
+    expected_ts1_abspath = os.path.join(base_uri, 'entire1.ts')
     expected_ts1_path = '/entire1.ts'
-    expected_ts2_abspath = '%s/entire2.ts' % os.path.dirname(base_uri)
+    expected_ts2_abspath = os.path.join(os.path.dirname(base_uri), 'entire2.ts')
     expected_ts2_path = '../entire2.ts'
-    expected_ts3_abspath = '%s/entire3.ts' % os.path.dirname(os.path.dirname(base_uri))
+    expected_ts3_abspath = os.path.join(os.path.dirname(os.path.dirname(base_uri)), 'entire3.ts')
     expected_ts3_path = '../../entire3.ts'
-    expected_ts4_abspath = '%s/entire4.ts' % base_uri
+    expected_ts4_abspath = os.path.join(base_uri, 'entire4.ts')
     expected_ts4_path = 'entire4.ts'
 
     assert isinstance(obj, m3u8.M3U8)
@@ -67,18 +67,18 @@ def test_load_should_create_object_from_file_with_relative_segments():
     assert expected_ts4_abspath == obj.segments[3].absolute_uri
 
 
-def test_load_should_create_object_from_uri_with_relative_segments():
+def test_load_should_create_object_from_uri_with_relative_segments(m3u8_server):
     obj = m3u8.load(playlists.RELATIVE_PLAYLIST_URI)
     urlparsed = url_parser.urlparse(playlists.RELATIVE_PLAYLIST_URI)
-    base_uri = os.path.normpath(urlparsed.path + '/..')
+    base_uri = os.path.normpath(urlparsed.path + '/..').replace(os.sep, '/')
     prefix = urlparsed.scheme + '://' + urlparsed.netloc
-    expected_key_abspath = '%s%s/key.bin' % (prefix, os.path.normpath(base_uri + '/..'))
+    expected_key_abspath = '%s%s/key.bin' % (prefix, os.path.normpath(base_uri + '/..').replace(os.sep, '/'))
     expected_key_path = '../key.bin'
     expected_ts1_abspath = '%s/entire1.ts' % (prefix)
     expected_ts1_path = '/entire1.ts'
-    expected_ts2_abspath = '%s%sentire2.ts' % (prefix, os.path.normpath(base_uri + '/..') + '/')
+    expected_ts2_abspath = '%s%sentire2.ts' % (prefix, os.path.normpath(base_uri + '/..').replace(os.sep, '/') + '/')
     expected_ts2_path = '../entire2.ts'
-    expected_ts3_abspath = '%s%sentire3.ts' % (prefix, os.path.normpath(base_uri + '/../..'))
+    expected_ts3_abspath = '%s%sentire3.ts' % (prefix, os.path.normpath(base_uri + '/../..').replace(os.sep, '/'))
     expected_ts3_path = '../../entire3.ts'
     expected_ts4_abspath = '%s%sentire4.ts' % (prefix, base_uri + '/')
     expected_ts4_path = 'entire4.ts'

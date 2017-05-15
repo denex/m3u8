@@ -6,6 +6,7 @@
 # Tests M3U8 class to make sure all attributes and methods use the correct
 # data returned from parser.parse()
 
+import os
 import arrow
 import datetime
 import m3u8
@@ -655,14 +656,14 @@ def test_m3u8_should_propagate_base_uri_to_segments():
         content = f.read()
     obj = m3u8.M3U8(content, base_uri='/any/path')
     assert '/entire1.ts' == obj.segments[0].uri
-    assert '/any/path/entire1.ts' == obj.segments[0].absolute_uri
+    assert os.sep.join(['', 'any', 'path', 'entire1.ts']) == obj.segments[0].absolute_uri
     assert 'entire4.ts' == obj.segments[3].uri
-    assert '/any/path/entire4.ts' == obj.segments[3].absolute_uri
+    assert os.sep.join(['', 'any', 'path', 'entire4.ts']) == obj.segments[3].absolute_uri
     obj.base_uri = '/any/where/'
     assert '/entire1.ts' == obj.segments[0].uri
-    assert '/any/where/entire1.ts' == obj.segments[0].absolute_uri
+    assert os.sep.join(['', 'any', 'where', 'entire1.ts']) == obj.segments[0].absolute_uri
     assert 'entire4.ts' == obj.segments[3].uri
-    assert '/any/where/entire4.ts' == obj.segments[3].absolute_uri
+    assert os.sep.join(['', 'any', 'where', 'entire4.ts']) == obj.segments[3].absolute_uri
 
 
 def test_m3u8_should_propagate_base_uri_to_key():
@@ -670,10 +671,10 @@ def test_m3u8_should_propagate_base_uri_to_key():
         content = f.read()
     obj = m3u8.M3U8(content, base_uri='/any/path')
     assert '../key.bin' == obj.keys[0].uri
-    assert '/any/key.bin' == obj.keys[0].absolute_uri
+    assert os.sep.join(['', 'any', 'key.bin']) == obj.keys[0].absolute_uri
     obj.base_uri = '/any/where/'
     assert '../key.bin' == obj.keys[0].uri
-    assert '/any/key.bin' == obj.keys[0].absolute_uri
+    assert os.sep.join(['', 'any', 'key.bin']) == obj.keys[0].absolute_uri
 
 
 def test_segment_map_uri_attribute():
