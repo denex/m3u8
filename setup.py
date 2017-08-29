@@ -12,16 +12,16 @@ if exists("README.rst"):
 INSTALL_REQS = tuple([req for req in open(abspath(join(dirname(__file__), 'requirements.txt')))])
 
 setup(
-    name="m3u8",
-    author='Globo.com',
-    author_email='videos3@corp.globo.com',
-    version="0.3.2",
+    name="m3u8-forked",
+    author='Denis Averin',
+    author_email='ddenex@gmail.com',
+    version="0.3.3",
     license='MIT',
     zip_safe=False,
     include_package_data=True,
     install_requires=INSTALL_REQS,
     packages=["m3u8"],
-    url="https://github.com/globocom/m3u8",
+    url="https://github.com/denex/m3u8",
     description="Python m3u8 parser",
     long_description=LONG_DESCRIPTION_TEXT
 )
